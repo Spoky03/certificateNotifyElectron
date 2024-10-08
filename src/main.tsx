@@ -1,8 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app";
-ReactDOM.createRoot(document.body).render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>
-);
+
+const container = document.getElementById("root");
+if (container) {
+    ReactDOM.createRoot(container).render(
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+    );
+} else {
+    console.error("Root container not found");
+}
