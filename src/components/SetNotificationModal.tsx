@@ -1,5 +1,4 @@
 import { Certificate } from "../types/Certificate";
-import { ipcRenderer } from "electron";
 import React, { useState } from "react";
 export const SetNotificationModal = ({
   cert,

@@ -3,6 +3,7 @@ import { Certificate } from "./types/Certificate";
 import { CertificateCard } from "./components/CertificateCard";
 import { SetNotificationModal } from "./components/SetNotificationModal";
 import { Navbar } from "./components/Navbar";
+import { EmailModal } from "./components/EmailModal";
 
 function ParseCertificates(certificates: string): Certificate[] {
   const lines = certificates.split("\n");
@@ -79,6 +80,19 @@ const App = () => {
   const [search, setSearch] = useState<string>("");
   const [hideExpired, setHideExpired] = useState<boolean>(false);
   const [modalCert, setModalCert] = useState<Certificate | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("");
+  useEffect(() => {
+    //fetch user email from the main process via IPC
+    window.api
+      .getUserEmail()
+      .then((email: string) => {
+        setUserEmail(email);
+      })
+      .catch((error: string) =>
+        console.error("Error fetching user email: ", error)
+      );
+  }
+  , []);
   useEffect(() => {
     // Fetch certificates from the main process via IPC
     window.api
@@ -93,7 +107,7 @@ const App = () => {
   }, []);
   return (
     <main>
-      <Navbar />
+      <Navbar email={userEmail} />
       <div className="px-5">
         <div className="border-gray-300 border shadow-sm h-16 mb-4 rounded-lg flex items-center">
           <input
@@ -149,6 +163,7 @@ const App = () => {
           </ul>
         )}
         <SetNotificationModal cert={modalCert} setModal={setModalCert} />
+        {!userEmail && <EmailModal userEmail={userEmail} setUserEmail={setUserEmail} />}
       </div>
     </main>
   );
