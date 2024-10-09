@@ -1,5 +1,10 @@
+// src/global.d.ts
 interface Window {
-    api: {
-      getCertificates: () => Promise<string>;
-    };
-  }
+  api: {
+    sendRequest: (options: {
+      data: unknown;
+      method: string;
+      url: string;
+    }) => Promise<unknown>;
+  };
+}

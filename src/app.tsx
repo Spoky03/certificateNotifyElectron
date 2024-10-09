@@ -3,7 +3,6 @@ import { Certificate } from "./types/Certificate";
 import { CertificateCard } from "./components/CertificateCard";
 import { SetNotificationModal } from "./components/SetNotificationModal";
 import { Navbar } from "./components/Navbar";
-// import { createRoot } from "react-dom/client";
 
 function ParseCertificates(certificates: string): Certificate[] {
   const lines = certificates.split("\n");

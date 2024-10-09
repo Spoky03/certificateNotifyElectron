@@ -1,5 +1,6 @@
 import { Certificate } from "../types/Certificate";
-import React from "react";
+import { ipcRenderer } from "electron";
+import React, { useState } from "react";
 export const SetNotificationModal = ({
   cert,
   setModal,
@@ -7,6 +8,29 @@ export const SetNotificationModal = ({
   cert: Certificate;
   setModal: (cert: Certificate) => void;
 }) => {
+  const [notifyBefore, setNotifyBefore] = useState<number>(0);
+
+  const sendNotification = async () => {
+    try {
+      const data = await window.api.sendRequest({
+        data: {
+          Subject: cert.Subject,
+          Issuer: cert.Issuer,
+          Thumbprint: cert.Thumbprint,
+          NotBefore: cert.NotBefore,
+          NotAfter: cert.NotAfter,
+          timeRemaining: cert.timeRemaining,
+          notifyBefore: notifyBefore,
+          email: "stefangrzelec@gmail.com",
+        },
+        method: "POST",
+        url: "http://localhost:3001/cert",
+      });
+      console.log(data);
+    } catch (error) {
+      console.warn("Failed to send notification:", error);
+    }
+  };
   return (
     <div>
       {cert && (
@@ -52,26 +76,31 @@ export const SetNotificationModal = ({
               onSubmit={(e) => {
                 e.preventDefault();
                 setModal(null);
+                sendNotification();
               }}
             >
               <div>
-                  <label htmlFor="notification" className="font-bold">Notification:</label>
-                  <p className="text-xs">
-                    X days before expiration, send a notification to your email
-                  </p>
+                <label htmlFor="notification" className="font-bold">
+                  Notification:
+                </label>
+                <p className="text-xs">
+                  X days before expiration, send a notification to your email
+                </p>
               </div>
               <div className="flex gap-2 self-end">
-                  <input
-                    type="text"
-                    id="notification"
-                    className="border border-gray-300 rounded-lg w-12"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-green-500 text-white rounded-lg px-2 py-1"
-                  >
-                    Set
-                  </button>
+                <input
+                  type="text"
+                  id="notification"
+                  className="border border-gray-300 rounded-lg w-12"
+                  value={notifyBefore}
+                  onChange={(e) => setNotifyBefore(parseInt(e.target.value))}
+                />
+                <button
+                  type="submit"
+                  className="bg-green-500 text-white rounded-lg px-2 py-1"
+                >
+                  Set
+                </button>
               </div>
             </form>
           </div>
