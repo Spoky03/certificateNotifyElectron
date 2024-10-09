@@ -1,5 +1,12 @@
+import { Certificate } from "../types/Certificate";
 import React, { useState } from "react";
-export const CertificateCard = ({ cert }: { cert: any }) => {
+export const CertificateCard = ({
+  cert,
+  setModal,
+}: {
+  cert: Certificate;
+  setModal: (cert: Certificate) => void;
+}) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   return (
     <li
@@ -10,12 +17,20 @@ export const CertificateCard = ({ cert }: { cert: any }) => {
         <h3 className="text-lg font-bold">
           {cert.FriendlyName || cert.Subject}
         </h3>
-        <button
-          className="font-bold border place-self-start px-2 rounded-md"
-          onClick={() => setExpanded((prev) => !prev)}
-        >
-          {expanded ? "Hide" : "Expand"}
-        </button>
+        <div className="space-x-2">
+          <button
+            className="font-bold border place-self-start px-2 rounded-md"
+            onClick={() => setExpanded((prev) => !prev)}
+          >
+            {expanded ? "Hide" : "Expand"}
+          </button>
+          <button
+            className="font-bold border place-self-start px-2 rounded-md"
+            onClick={() => setModal(cert)}
+          >
+            Set Notification
+          </button>
+        </div>
       </div>
       <p className="text-gray-600">{cert.Issuer}</p>
       {cert.timeRemaining ? (
