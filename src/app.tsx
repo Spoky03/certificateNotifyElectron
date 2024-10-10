@@ -4,6 +4,7 @@ import { CertificateCard } from "./components/CertificateCard";
 import { SetNotificationModal } from "./components/SetNotificationModal";
 import { Navbar } from "./components/Navbar";
 import { EmailModal } from "./components/EmailModal";
+import { GlobalNotificationModal } from "./components/GlobalNotificationModal";
 
 function ParseCertificates(certificates: string): Certificate[] {
   const lines = certificates.split("\n");
@@ -81,6 +82,7 @@ const App = () => {
   const [hideExpired, setHideExpired] = useState<boolean>(false);
   const [modalCert, setModalCert] = useState<Certificate | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [globalNotificationModal, setGlobalNotificationModal] = useState<boolean>(false);
   useEffect(() => {
     //fetch user email from the main process via IPC
     window.api
@@ -107,7 +109,7 @@ const App = () => {
   }, []);
   return (
     <main>
-      <Navbar email={userEmail} />
+      <Navbar email={userEmail} setModal={setGlobalNotificationModal} />
       <div className="px-5">
         <div className="border-gray-300 border shadow-sm h-16 mb-4 rounded-lg flex items-center">
           <input
@@ -164,7 +166,11 @@ const App = () => {
         )}
         <SetNotificationModal cert={modalCert} setModal={setModalCert} />
         {!userEmail && <EmailModal userEmail={userEmail} setUserEmail={setUserEmail} />}
+        {globalNotificationModal && <GlobalNotificationModal setModal={setGlobalNotificationModal} />}
       </div>
+      <div className="w-full text-end">
+          <p className="text-xs italic text-slate-500 px-4">Stefan Grzelec 2024</p>
+        </div>
     </main>
   );
 };

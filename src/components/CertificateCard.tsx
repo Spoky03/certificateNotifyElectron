@@ -22,13 +22,13 @@ export const CertificateCard = ({
             className="font-bold border place-self-start px-2 rounded-md"
             onClick={() => setExpanded((prev) => !prev)}
           >
-            {expanded ? "Hide" : "Expand"}
+            {expanded ? "⬆️" : "⬇️"}
           </button>
           <button
             className="font-bold border place-self-start px-2 rounded-md"
             onClick={() => setModal(cert)}
           >
-            Set Notification
+            🔔
           </button>
         </div>
       </div>
