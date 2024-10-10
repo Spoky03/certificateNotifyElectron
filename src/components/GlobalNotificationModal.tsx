@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-export const GlobalNotificationModal = ({
-  setModal,
 
-}: {
-  setModal: (arg: unknown) => void;
-}) => {
+import { Button } from "./ui/Button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/Dialog"
+import { Input } from "./ui/Input"
+
+export function GlobalNotificationModal() {
   const [days, setDays] = useState<number>(0);
   const sendGlobalNotification = async () => {
     try {
@@ -22,49 +31,46 @@ export const GlobalNotificationModal = ({
     }
   };
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded-lg">
-        <div className="flex justify-between">
-          <h2 className="font-bold">Set Global Notification</h2>
-          <button
-            className="text-red-500 font-bold place-self-start px-2 rounded-md"
-            onClick={() => setModal(false)}
-          >
-            X
-          </button>
-        </div>
-        <div className="h-0.5 w-full bg-black"> </div>
-        <div>
-          <form
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost">🌐</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Set Global Notification</DialogTitle>
+          <DialogDescription>
+          When any certificate in about to expire in X days send notification.
+          </DialogDescription>
+        </DialogHeader>
+        <form
             className="bg-white py-2 rounded-lg flex flex-col gap-2 justify-between"
             onSubmit={(e) => {
               e.preventDefault();
               sendGlobalNotification();
             }}
           >
-            <label htmlFor="notification">
-              {" "}
-              When any certificate in about to expire in X days send notification
-            </label>
-
             <div className="flex gap-2 self-center">
-              <input
+              <Input
                 type="text"
-                id="notification"
-                className="border border-gray-300 rounded-lg w-12"
                 value={days}
                 onChange={(e) => setDays(parseInt(e.target.value))}
               />
-              <button
+              <Button
                 type="submit"
-                className="bg-green-500 text-white rounded-lg px-2 py-1"
               >
                 Set
-              </button>
+              </Button>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
-  );
-};
+
+        {/* <DialogFooter className="sm:justify-start">
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogFooter> */}
+      </DialogContent>
+    </Dialog>
+  )
+}

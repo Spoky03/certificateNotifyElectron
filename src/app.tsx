@@ -4,7 +4,8 @@ import { CertificateCard } from "./components/CertificateCard";
 import { SetNotificationModal } from "./components/SetNotificationModal";
 import { Navbar } from "./components/Navbar";
 import { EmailModal } from "./components/EmailModal";
-import { GlobalNotificationModal } from "./components/GlobalNotificationModal";
+import { Input } from "./components/ui/Input";
+import { Label } from "./components/ui/Label";
 
 function ParseCertificates(certificates: string): Certificate[] {
   const lines = certificates.split("\n");
@@ -82,7 +83,6 @@ const App = () => {
   const [hideExpired, setHideExpired] = useState<boolean>(false);
   const [modalCert, setModalCert] = useState<Certificate | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
-  const [globalNotificationModal, setGlobalNotificationModal] = useState<boolean>(false);
   useEffect(() => {
     //fetch user email from the main process via IPC
     window.api
@@ -109,20 +109,21 @@ const App = () => {
   }, []);
   return (
     <main>
-      <Navbar email={userEmail} setModal={setGlobalNotificationModal} />
+      <Navbar email={userEmail} setUserEmail={setUserEmail} userEmail={userEmail} />
       <div className="px-5">
-        <div className="border-gray-300 border shadow-sm h-16 mb-4 rounded-lg flex items-center">
-          <input
-            className="border h-12 px-2 mx-2 rounded-lg"
+        <div className="border-gray-300 border shadow-sm h-16 mb-4 rounded-lg flex items-center justify-between">
+          <Input
+            className="mx-2 w-48"
             type="text"
             placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="justify-self-end w-full flex justify-end mr-2">
-            <label htmlFor="hideExpired" className="mr-2">
+          <div className="mr-2">
+            <Label htmlFor="hideExpired" className="">
               Hide expired
-            </label>
-            <input
+            </Label>
+            <Input
+            className="w-6 h-6"
               type="checkbox"
               id="hideExpired"
               name="hideExpired"
@@ -165,8 +166,6 @@ const App = () => {
           </ul>
         )}
         <SetNotificationModal cert={modalCert} setModal={setModalCert} />
-        {!userEmail && <EmailModal userEmail={userEmail} setUserEmail={setUserEmail} />}
-        {globalNotificationModal && <GlobalNotificationModal setModal={setGlobalNotificationModal} />}
       </div>
       <div className="w-full text-end">
           <p className="text-xs italic text-slate-500 px-4">Stefan Grzelec 2024</p>
