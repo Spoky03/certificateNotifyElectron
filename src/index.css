@@ -74,9 +74,15 @@
   * {
     @apply border-border;
   }
+  html {
+    /* scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) var(--background);
+    scrollbar-track-color: var(--background);
+  }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
 }
