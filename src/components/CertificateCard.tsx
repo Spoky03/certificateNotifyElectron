@@ -1,15 +1,15 @@
+import { useCertificateStore } from "../store";
 import { Certificate } from "../types/Certificate";
 import React, { useState } from "react";
 export const CertificateCard = ({
   cert,
   setModal,
-  notifications,
 }: {
   cert: Certificate;
   setModal: (cert: Certificate) => void;
-  notifications: number;
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
+  const notifications = useCertificateStore((state) => state.notifications);
   const notificationAmount = Array.isArray(notifications)
     ? notifications.find((n: any) => n.Thumbprint === cert.Thumbprint)
         ?.notifyBefore

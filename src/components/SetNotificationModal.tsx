@@ -12,6 +12,8 @@ import {
   DialogTrigger,
 } from "./ui/Dialog";
 import { Input } from "./ui/Input";
+import { useCertificateStore, useUserStore } from "../store";
+import { useToast } from "./hooks/use-toast";
 export function SetNotificationModal({
   cert,
   setModal,
@@ -20,7 +22,8 @@ export function SetNotificationModal({
   setModal: (cert: Certificate) => void;
 }) {
   const [notifyBefore, setNotifyBefore] = useState<number>(0);
-
+  const token = useUserStore((state) => state.token);
+  const { toast } = useToast()
   const sendNotification = async () => {
     try {
       const data = await window.api.sendRequest({
@@ -36,10 +39,31 @@ export function SetNotificationModal({
         },
         method: "POST",
         url: "http://localhost:3001/cert",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      console.log(data);
+      // change the state of the store of the notification that was sent
+      useCertificateStore.setState((state) => {
+        const notifications = state.notifications.map((n: any) => {
+          if (n.Thumbprint === cert.Thumbprint) {
+            return { ...n, notifyBefore };
+          }
+          return n;
+        });
+        return { ...state, notifications };
+      });
+      toast({
+        title: "Notification set",
+        description: `for ${cert.Subject} with ${notifyBefore} days`,
+      })
     } catch (error) {
-      console.warn("Failed to send notification:", error);
+      console.error("Error setting notification: ", error);
+      toast({
+        title: "Error setting notification",
+        description: `Error setting notification for ${cert.Subject}`,
+        variant: "destructive",
+      })
     }
   };
   return (

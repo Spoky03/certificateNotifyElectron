@@ -1,9 +1,15 @@
+import { useUserStore } from "../store";
 import { Certificate } from "@/types/Certificate";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+export function ClearStorage() {
+  window.api.setLocalStorage("email", "");
+  window.api.setLocalStorage("token", "");
+  useUserStore.setState({ email: "" });
+  useUserStore.setState({ token: "" });
 }
 export function ParseCertificates(certificates: string): Certificate[] {
   const lines = certificates.split("\n");
@@ -75,3 +81,4 @@ export function ParseCertificates(certificates: string): Certificate[] {
   });
   return certs;
 }
+

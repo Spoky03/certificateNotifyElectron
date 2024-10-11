@@ -1,116 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { Certificate } from "./types/Certificate";
-import { CertificateCard } from "./components/CertificateCard";
 import { SetNotificationModal } from "./components/SetNotificationModal";
 import { Navbar } from "./components/Navbar";
-import { Input } from "./components/ui/Input";
-import { Label } from "./components/ui/Label";
-import { ParseCertificates } from "./lib/utils";
+import { ClearStorage, ParseCertificates } from "./lib/utils";
 import { Footer } from "./components/Footer";
-
+import { useUserStore, useCertificateStore } from "./store";
+import { CertList } from "./components/CertList";
+import { Toaster } from "./components/ui/toaster";
+import { useToast } from "./components/hooks/use-toast";
+import { RemoteCertificateCard } from "./components/RemoteCertificateCard";
+import { RemoteCertificateModal } from "./components/RemoteCertificateModal";
 
 const App = () => {
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [hideExpired, setHideExpired] = useState<boolean>(false);
   const [modalCert, setModalCert] = useState<Certificate | null>(null);
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [notifications, setNotifications] = useState<any>([]);
-  useEffect(() => {
-    //fetch user email from the main process via IPC
-    window.api
-      .getUserEmail()
-      .then((email: string) => {
-        setUserEmail(email);
-      })
-      .catch((error: string) =>
-        console.error("Error fetching user email: ", error)
-      );
-  }, []);
+  const { toast } = useToast();
   useEffect(() => {
     // Fetch certificates from the main process via IPC
     window.api
       .getCertificates()
       .then((certs: string) => {
         const parsedCerts = ParseCertificates(certs);
-        setCertificates(parsedCerts);
+        useCertificateStore.setState({ certificates: parsedCerts });
       })
       .catch((error: string) =>
         console.error("Error fetching certificates: ", error)
       );
   }, []);
   useEffect(() => {
-    // Fetch certificates from the main process via IPC
+    //fetch user email from the main process via IPC
     window.api
-      .sendRequest({
-        method: "GET",
-        url: `http://localhost:3001/cert?email=${userEmail}`,
+      .getLocalStorage("exp")
+      .then((exp: string) => {
+        if (Number(exp) < Date.now()) {
+          ClearStorage();
+          toast({
+            title: "Your session has expired",
+            description: `Please login again to continue`,
+          })
+          useUserStore.setState({ email: "" });
+          useUserStore.setState({ token: "" });
+        }
       })
-      .then((certs: any) => {
-        setNotifications(certs);
+      .catch(() => ClearStorage());
+    window.api
+      .getLocalStorage("email")
+      .then((email: string) => {
+        useUserStore.setState({ email });
       })
       .catch((error: string) =>
-        console.error("Error fetching certificates: ", error)
+        console.error("Error fetching user email: ", error)
       );
-  }, [userEmail]);
+    window.api
+      .getLocalStorage("token")
+      .then((token: string) => {
+        useUserStore.setState({ token });
+      })
+      .catch((error: string) =>
+        console.error("Error fetching user token: ", error)
+      );
+  }, []);
   return (
     <main>
-      <Navbar
-        email={userEmail}
-        setUserEmail={setUserEmail}
-        userEmail={userEmail}
-      />
+      <Navbar />
       <div className="px-5">
-        {/* {notifications && (
-          <pre className="text-xs text-slate-500">
-            {JSON.stringify(notifications, null, 2)}
-          </pre>
-        )} */}
-        <div className="border-gray-300 border shadow-sm h-16 mb-4 rounded-lg flex items-center justify-between">
-          <Input
-            className="mx-2 w-48"
-            type="text"
-            placeholder="Search"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="mr-2">
-            <Label htmlFor="hideExpired" className="">
-              Hide expired
-            </Label>
-            <Input
-              className="w-6 h-6"
-              type="checkbox"
-              id="hideExpired"
-              name="hideExpired"
-              checked={hideExpired}
-              onChange={() => setHideExpired((prev) => !prev)}
-            />
-          </div>
-        </div>
-        <ul>
-          {certificates
-            .filter((cert) => !hideExpired || cert.timeRemaining)
-            .filter(
-              (cert) =>
-                !search ||
-                cert.Subject.toLowerCase().includes(search.toLowerCase())
-            )
-            .map(
-              (cert) =>
-                cert.Thumbprint && (
-                  <CertificateCard
-                    key={cert.Thumbprint}
-                    cert={cert}
-                    setModal={setModalCert}
-                    notifications={notifications.data}
-                  />
-                )
-            )}
-        </ul>
-
+        <RemoteCertificateModal />
+        <RemoteCertificateCard />
+        <CertList setModal={setModalCert} />
         <SetNotificationModal cert={modalCert} setModal={setModalCert} />
       </div>
       <Footer />
+      <Toaster />
     </main>
   );
 };
