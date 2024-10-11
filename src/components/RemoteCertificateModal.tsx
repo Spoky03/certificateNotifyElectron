@@ -14,7 +14,7 @@ import {
 import { Input } from "./ui/Input";
 import { Label } from "./ui/Label";
 import React, { useState } from "react";
-import { useCertificateStore } from "../store";
+import { useCertificateStore, useUserStore } from "../store";
 import { useToast } from "./hooks/use-toast";
 import { Certificate } from "../types/Certificate";
 function parseCertificateData(response: string): Certificate[] {
@@ -83,6 +83,7 @@ function parseCertificateData(response: string): Certificate[] {
 }
 export function RemoteCertificateModal() {
   const [url, setUrl] = useState<string>("");
+  const token = useUserStore((state) => state.token);
   const { toast } = useToast();
   function getRemoteCertificates() {
     window.api
@@ -93,6 +94,25 @@ export function RemoteCertificateModal() {
         toast({
           title: "Remote certificates fetched",
           description: `Fetched certificate`,
+        });
+        // send the certificates to server
+        parsedCerts.forEach((cert) => {
+          window.api
+            .sendRequest({
+              method: "POST",
+              url: `http://localhost:3001/cert`,
+              body: cert,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+            )
+            .then((cert) => {
+              console.log("Certificate added: ", cert);
+            })
+            .catch((error: string) =>
+              console.error("Error adding certificate: ", error)
+            );
         });
       })
       .catch((error: string) =>

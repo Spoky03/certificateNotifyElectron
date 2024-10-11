@@ -12,6 +12,7 @@ export const CertList = ({
   const [search, setSearch] = useState<string>("");
   const [hideExpired, setHideExpired] = useState<boolean>(false);
   const certificates = useCertificateStore((state) => state.certificates);
+  const remoteCertificates = useCertificateStore((state) => state.remoteCertificates);
   const token = useUserStore((state) => state.token);
   useEffect(() => {
     // Fetch certificates from the main process via IPC
@@ -54,6 +55,9 @@ export const CertList = ({
         </div>
       </div>
       <ul>
+        {remoteCertificates.map((cert) => (
+          <CertificateCard key={cert.Thumbprint} cert={cert} setModal={setModal} />
+        ))}
         {certificates
           .filter((cert) => !hideExpired || cert.timeRemaining)
           .filter(
