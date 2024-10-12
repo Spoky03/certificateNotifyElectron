@@ -97,11 +97,12 @@ export function RemoteCertificateModal() {
         });
         // send the certificates to server
         parsedCerts.forEach((cert) => {
+          console.log({ ...cert, remote: true });
           window.api
             .sendRequest({
               method: "POST",
               url: `http://localhost:3001/cert`,
-              body: cert,
+              data: {...cert, remote: true},
               headers: {
                 Authorization: `Bearer ${token}`,
               },

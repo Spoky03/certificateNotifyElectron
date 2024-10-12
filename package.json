@@ -68,9 +68,11 @@
   "build": {
     "extraFiles": [
       {
-        "from": "resources/${os}",
-        "to": "Resources/bin",    
-        "filter": ["**/*"]
+        "from": "resources/win",
+        "to": "Resources/bin",
+        "filter": [
+          "**/*"
+        ]
       }
     ]
   }

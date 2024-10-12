@@ -8,7 +8,6 @@ import { useUserStore, useCertificateStore } from "./store";
 import { CertList } from "./components/CertList";
 import { Toaster } from "./components/ui/toaster";
 import { useToast } from "./components/hooks/use-toast";
-import { RemoteCertificateModal } from "./components/RemoteCertificateModal";
 
 const App = () => {
   const [modalCert, setModalCert] = useState<Certificate | null>(null);
@@ -62,7 +61,6 @@ const App = () => {
     <main>
       <Navbar />
       <div className="px-5">
-        <RemoteCertificateModal />
         <CertList setModal={setModalCert} />
         <SetNotificationModal cert={modalCert} setModal={setModalCert} />
       </div>

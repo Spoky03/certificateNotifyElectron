@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "./ui/Button";
 import { GlobalNotificationModal } from "./GlobalNotificationModal";
 import { EmailModal } from "./EmailModal";
 import { useUserStore } from "../store";

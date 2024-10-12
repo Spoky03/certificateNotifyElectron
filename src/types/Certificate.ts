@@ -6,6 +6,8 @@ export interface CertificateDTO {
     NotBefore: string;
     NotAfter: string;
     Extensions?: string;
+    notifyBefore?: number;
+    remote?: boolean;
   }
 export interface Certificate extends CertificateDTO {
     timeRemaining: number | null;

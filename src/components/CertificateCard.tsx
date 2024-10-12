@@ -11,13 +11,13 @@ export const CertificateCard = ({
   const [expanded, setExpanded] = useState<boolean>(false);
   const notifications = useCertificateStore((state) => state.notifications);
   const notificationAmount = Array.isArray(notifications)
-    ? notifications.find((n: any) => n.Thumbprint === cert.Thumbprint)
+    ? notifications.find((n: Certificate) => n.Thumbprint === cert.Thumbprint)
         ?.notifyBefore
     : 0;
   return (
     <li
       key={cert.Thumbprint}
-      className="p-4 border border-gray-300 rounded-lg shadow-md mb-2"
+      className={`p-4 border border-gray-300 rounded-lg shadow-md mb-2 ${cert.remote ? 'bg-blue-50' : ''}`}
     >
       <div className="flex justify-between">
         <h3 className="text-lg font-bold">
@@ -34,7 +34,7 @@ export const CertificateCard = ({
             className="font-bold border place-self-start px-2 rounded-md"
             onClick={() => setModal(cert)}
           >
-            🔔 {notificationAmount && `| ${notificationAmount}`}
+            🔔 {notificationAmount ? `| ${notificationAmount}` : (cert.remote ? cert.notifyBefore : '')}
           </button>
         </div>
       </div>
@@ -52,9 +52,9 @@ export const CertificateCard = ({
 
       {expanded && (
         <div className="mt-4">
-          <p>
+          {!cert.remote && <p>
             <span className="font-bold">Thumbprint:</span> {cert.Thumbprint}
-          </p>
+          </p>}
           {/* <p>
             <span className="font-bold">From:</span>{" "}
             {cert.NotBefore.toString()}
@@ -68,9 +68,9 @@ export const CertificateCard = ({
               {cert.NotBefore.toString()} - {cert.NotAfter.toString()}
             </span>
           </p>
-          <p>
+          {!cert.remote&&<p>
             <span className="font-bold">Extensions:</span> {cert.Extensions}
-          </p>
+          </p>}
         </div>
       )}
     </li>

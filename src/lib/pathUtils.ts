@@ -22,6 +22,7 @@ export function getPlatform() {
   }
   
   export function getBinariesPath() {
+    console.log(process.resourcesPath)
     const IS_PROD = process.env.NODE_ENV === 'production';
     const { isPackaged } = app;
   
@@ -30,9 +31,8 @@ export function getPlatform() {
         ? path.join(process.resourcesPath, './bin')
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         : path.join(app.getAppPath(), 'resources', getPlatform()!);
-  
     return binariesPath;
   }
   
   // openssl
-  export const opensslPath = path.resolve(path.join(getBinariesPath(), './openssl/bin/openssl'));
+  export const opensslPath = path.resolve(path.join(getBinariesPath(), './openssl/openssl'));
