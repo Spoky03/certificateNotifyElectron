@@ -111,7 +111,7 @@ ipcMain.handle("get-certificates", async () => {
 // });
 ipcMain.handle("get-remote-certificates", async (_, command) => {
   return new Promise((resolve, reject) => {
-    const child = spawn(opensslPath, [
+    const child = spawn('openssl', [
       "s_client",
       "-connect",
       `${command}:443`,
