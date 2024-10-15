@@ -12,9 +12,11 @@ import {
   DialogTrigger,
 } from "./ui/Dialog"
 import { Input } from "./ui/Input"
+import { useUserStore } from "../store"
 
 export function GlobalNotificationModal() {
   const [days, setDays] = useState<number>(0);
+  const globalNotification = useUserStore((state) => state.globalNotification);
   const sendGlobalNotification = async () => {
     try {
       const data = await window.api.sendRequest({
@@ -33,7 +35,7 @@ export function GlobalNotificationModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost">🌐</Button>
+        <Button variant="ghost">🌐 - {globalNotification}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

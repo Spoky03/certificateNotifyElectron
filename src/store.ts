@@ -5,6 +5,8 @@ interface UserState {
   email: string;
   token: string;
   setEmail: (email: string) => void;
+  globalNotification: number;
+  setGlobalNotification: (globalNotification: number) => void;
 }
 
 const useUserStore = create<UserState>()((set) => ({
@@ -12,6 +14,10 @@ const useUserStore = create<UserState>()((set) => ({
   token: "",
   setEmail: (email: string) => {
     set({ email });
+  },
+  globalNotification: 0,
+  setGlobalNotification: (globalNotification: number) => {
+    set({ globalNotification });
   },
 }));
 
